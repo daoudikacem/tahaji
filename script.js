@@ -1101,10 +1101,66 @@ function generateTwoLetterCombination() {
         return letter1 + letter2;
     }
     
-    const letter1 = selectedLetters[Math.floor(Math.random() * selectedLetters.length)];
-    const letter2 = selectedLetters[Math.floor(Math.random() * selectedLetters.length)];
+    // Extract syllables from words in words.json that match selected letters and diacritics
+    const syllables = extractSyllablesFromWords();
     
-    // Apply diacritics to both letters
+    // If we have valid syllables, use them
+    if (syllables.length > 0 && Math.random() < 0.9) { // 90% chance to use real syllables
+        return syllables[Math.floor(Math.random() * syllables.length)];
+    }
+    
+    // Fallback to the previous method
+    // Filter valid combinations to only include selected letters
+    const validCombinations = [
+        // Common consonant clusters - but only include letters that are selected
+        ['ب', 'ت'], ['ب', 'ث'], ['ب', 'ج'], ['ب', 'ح'], ['ب', 'خ'], ['ب', 'د'], ['ب', 'ذ'], ['ب', 'ر'], ['ب', 'ز'], ['ب', 'س'], ['ب', 'ش'], ['ب', 'ص'], ['ب', 'ض'], ['ب', 'ط'], ['ب', 'ظ'], ['ب', 'ع'], ['ب', 'غ'], ['ب', 'ف'], ['ب', 'ق'], ['ب', 'ك'], ['ب', 'ل'], ['ب', 'م'], ['ب', 'ن'], ['ب', 'ه'],
+        ['ت', 'ب'], ['ت', 'ث'], ['ت', 'ج'], ['ت', 'ح'], ['ت', 'خ'], ['ت', 'د'], ['ت', 'ذ'], ['ت', 'ر'], ['ت', 'ز'], ['ت', 'س'], ['ت', 'ش'], ['ت', 'ص'], ['ت', 'ض'], ['ت', 'ط'], ['ت', 'ظ'], ['ت', 'ع'], ['ت', 'غ'], ['ت', 'ف'], ['ت', 'ق'], ['ت', 'ك'], ['ت', 'ل'], ['ت', 'م'], ['ت', 'ن'], ['ت', 'ه'],
+        ['ث', 'ب'], ['ث', 'ت'], ['ث', 'ج'], ['ث', 'ح'], ['ث', 'خ'], ['ث', 'د'], ['ث', 'ذ'], ['ث', 'ر'], ['ث', 'ز'], ['ث', 'س'], ['ث', 'ش'], ['ث', 'ص'], ['ث', 'ض'], ['ث', 'ط'], ['ث', 'ظ'], ['ث', 'ع'], ['ث', 'غ'], ['ث', 'ف'], ['ث', 'ق'], ['ث', 'ك'], ['ث', 'ل'], ['ث', 'م'], ['ث', 'ن'], ['ث', 'ه'],
+        ['ج', 'ب'], ['ج', 'ت'], ['ج', 'ث'], ['ج', 'ح'], ['ج', 'خ'], ['ج', 'د'], ['ج', 'ذ'], ['ج', 'ر'], ['ج', 'ز'], ['ج', 'س'], ['ج', 'ش'], ['ج', 'ص'], ['ج', 'ض'], ['ج', 'ط'], ['ج', 'ظ'], ['ج', 'ع'], ['ج', 'غ'], ['ج', 'ف'], ['ج', 'ق'], ['ج', 'ك'], ['ج', 'ل'], ['ج', 'م'], ['ج', 'ن'], ['ج', 'ه'],
+        ['ح', 'ب'], ['ح', 'ت'], ['ح', 'ث'], ['ح', 'ج'], ['ح', 'خ'], ['ح', 'د'], ['ح', 'ذ'], ['ح', 'ر'], ['ح', 'ز'], ['ح', 'س'], ['ح', 'ش'], ['ح', 'ص'], ['ح', 'ض'], ['ح', 'ط'], ['ح', 'ظ'], ['ح', 'ع'], ['ح', 'غ'], ['ح', 'ف'], ['ح', 'ق'], ['ح', 'ك'], ['ح', 'ل'], ['ح', 'م'], ['ح', 'ن'], ['ح', 'ه'],
+        ['خ', 'ب'], ['خ', 'ت'], ['خ', 'ث'], ['خ', 'ج'], ['خ', 'ح'], ['خ', 'خ'], ['خ', 'د'], ['خ', 'ذ'], ['خ', 'ر'], ['خ', 'ز'], ['خ', 'س'], ['خ', 'ش'], ['خ', 'ص'], ['خ', 'ض'], ['خ', 'ط'], ['خ', 'ظ'], ['خ', 'ع'], ['خ', 'غ'], ['خ', 'ف'], ['خ', 'ق'], ['خ', 'ك'], ['خ', 'ل'], ['خ', 'م'], ['خ', 'ن'], ['خ', 'ه'],
+        ['د', 'ب'], ['د', 'ت'], ['د', 'ث'], ['د', 'ج'], ['د', 'ح'], ['د', 'خ'], ['د', 'د'], ['د', 'ذ'], ['د', 'ر'], ['د', 'ز'], ['د', 'س'], ['د', 'ش'], ['د', 'ص'], ['د', 'ض'], ['د', 'ط'], ['د', 'ظ'], ['د', 'ع'], ['د', 'غ'], ['د', 'ف'], ['د', 'ق'], ['د', 'ك'], ['د', 'ل'], ['د', 'م'], ['د', 'ن'], ['د', 'ه'],
+        ['ذ', 'ب'], ['ذ', 'ت'], ['ذ', 'ث'], ['ذ', 'ج'], ['ذ', 'ح'], ['ذ', 'خ'], ['ذ', 'د'], ['ذ', 'ر'], ['ذ', 'ز'], ['ذ', 'س'], ['ذ', 'ش'], ['ذ', 'ص'], ['ذ', 'ض'], ['ذ', 'ط'], ['ذ', 'ظ'], ['ذ', 'ع'], ['ذ', 'غ'], ['ذ', 'ف'], ['ذ', 'ق'], ['ذ', 'ك'], ['ذ', 'ل'], ['ذ', 'م'], ['ذ', 'ن'], ['ذ', 'ه'],
+        ['ر', 'ب'], ['ر', 'ت'], ['ر', 'ث'], ['ر', 'ج'], ['ر', 'ح'], ['ر', 'خ'], ['ر', 'د'], ['ر', 'ذ'], ['ر', 'ر'], ['ر', 'ز'], ['ر', 'س'], ['ر', 'ش'], ['ر', 'ص'], ['ر', 'ض'], ['ر', 'ط'], ['ر', 'ظ'], ['ر', 'ع'], ['ر', 'غ'], ['ر', 'ف'], ['ر', 'ق'], ['ر', 'ك'], ['ر', 'ل'], ['ر', 'م'], ['ر', 'ن'], ['ر', 'ه'],
+        ['ز', 'ب'], ['ز', 'ت'], ['ز', 'ث'], ['ز', 'ج'], ['ز', 'ح'], ['ز', 'خ'], ['ز', 'د'], ['ز', 'ذ'], ['ز', 'ر'], ['ز', 'ز'], ['ز', 'س'], ['ز', 'ش'], ['ز', 'ص'], ['ز', 'ض'], ['ز', 'ط'], ['ز', 'ظ'], ['ز', 'ع'], ['ز', 'غ'], ['ز', 'ف'], ['ز', 'ق'], ['ز', 'ك'], ['ز', 'ل'], ['ز', 'م'], ['ز', 'ن'], ['ز', 'ه'],
+        ['س', 'ب'], ['س', 'ت'], ['س', 'ث'], ['س', 'ج'], ['س', 'ح'], ['س', 'خ'], ['س', 'د'], ['س', 'ذ'], ['س', 'ر'], ['س', 'ز'], ['س', 'س'], ['س', 'ش'], ['س', 'ص'], ['س', 'ض'], ['س', 'ط'], ['س', 'ظ'], ['س', 'ع'], ['س', 'غ'], ['س', 'ف'], ['س', 'ق'], ['س', 'ك'], ['س', 'ل'], ['س', 'م'], ['س', 'ن'], ['س', 'ه'],
+        ['ش', 'ب'], ['ش', 'ت'], ['ش', 'ث'], ['ش', 'ج'], ['ش', 'ح'], ['ش', 'خ'], ['ش', 'د'], ['ش', 'ذ'], ['ش', 'ر'], ['ش', 'ز'], ['ش', 'س'], ['ش', 'ش'], ['ش', 'ص'], ['ش', 'ض'], ['ش', 'ط'], ['ش', 'ظ'], ['ش', 'ع'], ['ش', 'غ'], ['ش', 'ف'], ['ش', 'ق'], ['ش', 'ك'], ['ش', 'ل'], ['ش', 'م'], ['ش', 'ن'], ['ش', 'ه'],
+        ['ص', 'ب'], ['ص', 'ت'], ['ص', 'ث'], ['ص', 'ج'], ['ص', 'ح'], ['ص', 'خ'], ['ص', 'د'], ['ص', 'ذ'], ['ص', 'ر'], ['ص', 'ز'], ['ص', 'س'], ['ص', 'ش'], ['ص', 'ص'], ['ص', 'ض'], ['ص', 'ط'], ['ص', 'ظ'], ['ص', 'ع'], ['ص', 'غ'], ['ص', 'ف'], ['ص', 'ق'], ['ص', 'ك'], ['ص', 'ل'], ['ص', 'م'], ['ص', 'ن'], ['ص', 'ه'],
+        ['ض', 'ب'], ['ض', 'ت'], ['ض', 'ث'], ['ض', 'ج'], ['ض', 'ح'], ['ض', 'خ'], ['ض', 'د'], ['ض', 'ذ'], ['ض', 'ر'], ['ض', 'ز'], ['ض', 'س'], ['ض', 'ش'], ['ض', 'ص'], ['ض', 'ض'], ['ض', 'ط'], ['ض', 'ظ'], ['ض', 'ع'], ['ض', 'غ'], ['ض', 'ف'], ['ض', 'ق'], ['ض', 'ك'], ['ض', 'ل'], ['ض', 'م'], ['ض', 'ن'], ['ض', 'ه'],
+        ['ط', 'ب'], ['ط', 'ت'], ['ط', 'ث'], ['ط', 'ج'], ['ط', 'ح'], ['ط', 'خ'], ['ط', 'د'], ['ط', 'ذ'], ['ط', 'ر'], ['ط', 'ز'], ['ط', 'س'], ['ط', 'ش'], ['ط', 'ص'], ['ط', 'ض'], ['ط', 'ط'], ['ط', 'ظ'], ['ط', 'ع'], ['ط', 'غ'], ['ط', 'ف'], ['ط', 'ق'], ['ط', 'ك'], ['ط', 'ل'], ['ط', 'م'], ['ط', 'ن'], ['ط', 'ه'],
+        ['ظ', 'ب'], ['ظ', 'ت'], ['ظ', 'ث'], ['ظ', 'ج'], ['ظ', 'ح'], ['ظ', 'خ'], ['ظ', 'د'], ['ظ', 'ذ'], ['ظ', 'ر'], ['ظ', 'ز'], ['ظ', 'س'], ['ظ', 'ش'], ['ظ', 'ص'], ['ظ', 'ض'], ['ظ', 'ط'], ['ظ', 'ظ'], ['ظ', 'ع'], ['ظ', 'غ'], ['ظ', 'ف'], ['ظ', 'ق'], ['ظ', 'ك'], ['ظ', 'ل'], ['ظ', 'م'], ['ظ', 'ن'], ['ظ', 'ه'],
+        ['ع', 'ب'], ['ع', 'ت'], ['ع', 'ث'], ['ع', 'ج'], ['ع', 'ح'], ['ع', 'خ'], ['ع', 'د'], ['ع', 'ذ'], ['ع', 'ر'], ['ع', 'ز'], ['ع', 'س'], ['ع', 'ش'], ['ع', 'ص'], ['ع', 'ض'], ['ع', 'ط'], ['ع', 'ظ'], ['ع', 'ع'], ['ع', 'غ'], ['ع', 'ف'], ['ع', 'ق'], ['ع', 'ك'], ['ع', 'ل'], ['ع', 'م'], ['ع', 'ن'], ['ع', 'ه'],
+        ['غ', 'ب'], ['غ', 'ت'], ['غ', 'ث'], ['غ', 'ج'], ['غ', 'ح'], ['غ', 'خ'], ['غ', 'د'], ['غ', 'ذ'], ['غ', 'ر'], ['غ', 'ز'], ['غ', 'س'], ['غ', 'ش'], ['غ', 'ص'], ['غ', 'ض'], ['غ', 'ط'], ['غ', 'ظ'], ['غ', 'ع'], ['غ', 'غ'], ['غ', 'ف'], ['غ', 'ق'], ['غ', 'ك'], ['غ', 'ل'], ['غ', 'م'], ['غ', 'ن'], ['غ', 'ه'],
+        ['ف', 'ب'], ['ف', 'ت'], ['ف', 'ث'], ['ف', 'ج'], ['ف', 'ح'], ['ف', 'خ'], ['ف', 'د'], ['ف', 'ذ'], ['ف', 'ر'], ['ف', 'ز'], ['ف', 'س'], ['ف', 'ش'], ['ف', 'ص'], ['ف', 'ض'], ['ف', 'ط'], ['ف', 'ظ'], ['ف', 'ع'], ['ف', 'غ'], ['ف', 'ف'], ['ف', 'ق'], ['ف', 'ك'], ['ف', 'ل'], ['ف', 'م'], ['ف', 'ن'], ['ف', 'ه'],
+        ['ق', 'ب'], ['ق', 'ت'], ['ق', 'ث'], ['ق', 'ج'], ['ق', 'ح'], ['ق', 'خ'], ['ق', 'د'], ['ق', 'ذ'], ['ق', 'ر'], ['ق', 'ز'], ['ق', 'س'], ['ق', 'ش'], ['ق', 'ص'], ['ق', 'ض'], ['ق', 'ط'], ['ق', 'ظ'], ['ق', 'ع'], ['ق', 'غ'], ['ق', 'ف'], ['ق', 'ق'], ['ق', 'ك'], ['ق', 'ل'], ['ق', 'م'], ['ق', 'ن'], ['ق', 'ه'],
+        ['ك', 'ب'], ['ك', 'ت'], ['ك', 'ث'], ['ك', 'ج'], ['ك', 'ح'], ['ك', 'خ'], ['ك', 'د'], ['ك', 'ذ'], ['ك', 'ر'], ['ك', 'ز'], ['ك', 'س'], ['ك', 'ش'], ['ك', 'ص'], ['ك', 'ض'], ['ك', 'ط'], ['ك', 'ظ'], ['ك', 'ع'], ['ك', 'غ'], ['ك', 'ف'], ['ك', 'ق'], ['ك', 'ك'], ['ك', 'ل'], ['ك', 'م'], ['ك', 'ن'], ['ك', 'ه'],
+        ['ل', 'ب'], ['ل', 'ت'], ['ل', 'ث'], ['ل', 'ج'], ['ل', 'ح'], ['ل', 'خ'], ['ل', 'د'], ['ل', 'ذ'], ['ل', 'ر'], ['ل', 'ز'], ['ل', 'س'], ['ل', 'ش'], ['ل', 'ص'], ['ل', 'ض'], ['ل', 'ط'], ['ل', 'ظ'], ['ل', 'ع'], ['ل', 'غ'], ['ل', 'ف'], ['ل', 'ق'], ['ل', 'ك'], ['ل', 'ل'], ['ل', 'م'], ['ل', 'ن'], ['ل', 'ه'],
+        ['م', 'ب'], ['م', 'ت'], ['م', 'ث'], ['م', 'ج'], ['م', 'ح'], ['م', 'خ'], ['م', 'د'], ['م', 'ذ'], ['م', 'ر'], ['م', 'ز'], ['م', 'س'], ['م', 'ش'], ['م', 'ص'], ['م', 'ض'], ['م', 'ط'], ['م', 'ظ'], ['م', 'ع'], ['م', 'غ'], ['م', 'ف'], ['م', 'ق'], ['م', 'ك'], ['م', 'ل'], ['م', 'م'], ['م', 'ن'], ['م', 'ه'],
+        ['ن', 'ب'], ['ن', 'ت'], ['ن', 'ث'], ['ن', 'ج'], ['ن', 'ح'], ['ن', 'خ'], ['ن', 'د'], ['ن', 'ذ'], ['ن', 'ر'], ['ن', 'ز'], ['ن', 'س'], ['ن', 'ش'], ['ن', 'ص'], ['ن', 'ض'], ['ن', 'ط'], ['ن', 'ظ'], ['ن', 'ع'], ['ن', 'غ'], ['ن', 'ف'], ['ن', 'ق'], ['ن', 'ك'], ['ن', 'ل'], ['ن', 'م'], ['ن', 'ن'], ['ن', 'ه'],
+        ['ه', 'ب'], ['ه', 'ت'], ['ه', 'ث'], ['ه', 'ج'], ['ه', 'ح'], ['ه', 'خ'], ['ه', 'د'], ['ه', 'ذ'], ['ه', 'ر'], ['ه', 'ز'], ['ه', 'س'], ['ه', 'ش'], ['ه', 'ص'], ['ه', 'ض'], ['ه', 'ط'], ['ه', 'ظ'], ['ه', 'ع'], ['ه', 'غ'], ['ه', 'ف'], ['ه', 'ق'], ['ه', 'ك'], ['ه', 'ل'], ['ه', 'م'], ['ه', 'ن'],
+        // Common vowel combinations with long vowels - but only include letters that are selected
+        ['ا', 'ب'], ['ا', 'ت'], ['ا', 'ث'], ['ا', 'ج'], ['ا', 'ح'], ['ا', 'خ'], ['ا', 'د'], ['ا', 'ذ'], ['ا', 'ر'], ['ا', 'ز'], ['ا', 'س'], ['ا', 'ش'], ['ا', 'ص'], ['ا', 'ض'], ['ا', 'ط'], ['ا', 'ظ'], ['ا', 'ع'], ['ا', 'غ'], ['ا', 'ف'], ['ا', 'ق'], ['ا', 'ك'], ['ا', 'ل'], ['ا', 'م'], ['ا', 'ن'], ['ا', 'ه'],
+        ['و', 'ب'], ['و', 'ت'], ['و', 'ث'], ['و', 'ج'], ['و', 'ح'], ['و', 'خ'], ['و', 'د'], ['و', 'ذ'], ['و', 'ر'], ['و', 'ز'], ['و', 'س'], ['و', 'ش'], ['و', 'ص'], ['و', 'ض'], ['و', 'ط'], ['و', 'ظ'], ['و', 'ع'], ['و', 'غ'], ['و', 'ف'], ['و', 'ق'], ['و', 'ك'], ['و', 'ل'], ['و', 'م'], ['و', 'ن'], ['و', 'ه'],
+        ['ي', 'ب'], ['ي', 'ت'], ['ي', 'ث'], ['ي', 'ج'], ['ي', 'ح'], ['ي', 'خ'], ['ي', 'د'], ['ي', 'ذ'], ['ي', 'ر'], ['ي', 'ز'], ['ي', 'س'], ['ي', 'ش'], ['ي', 'ص'], ['ي', 'ض'], ['ي', 'ط'], ['ي', 'ظ'], ['ي', 'ع'], ['ي', 'غ'], ['ي', 'ف'], ['ي', 'ق'], ['ي', 'ك'], ['ي', 'ل'], ['ي', 'م'], ['ي', 'ن'], ['ي', 'ه']
+    ].filter(combo => 
+        selectedLetters.includes(combo[0]) && selectedLetters.includes(combo[1])
+    );
+    
+    // Select letters - either from valid combinations or from selected letters
+    let letter1, letter2;
+    
+    // 80% chance to use valid combinations if we have any that match selected letters
+    if (validCombinations.length > 0 && Math.random() < 0.8) {
+        const validCombo = validCombinations[Math.floor(Math.random() * validCombinations.length)];
+        letter1 = validCombo[0];
+        letter2 = validCombo[1];
+    } else {
+        // Fall back to random selection from selected letters only
+        letter1 = selectedLetters[Math.floor(Math.random() * selectedLetters.length)];
+        letter2 = selectedLetters[Math.floor(Math.random() * selectedLetters.length)];
+    }
+    
+    // Apply diacritics to both letters with improved rules
     let result = letter1;
     
     // Always add a diacritic to the first letter (100% chance)
@@ -1202,6 +1258,197 @@ function generateTwoLetterCombination() {
     }
     
     return result;
+}
+
+// Extract syllables from words in words.json that match selected letters and diacritics
+function extractSyllablesFromWords() {
+    // Load words from JSON file
+    let words = [];
+    try {
+        // In a browser environment, we need to fetch the JSON file
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'words.json', false); // Synchronous request for simplicity
+        xhr.send(null);
+        if (xhr.status === 200) {
+            const data = JSON.parse(xhr.responseText);
+            words = data.words;
+        }
+    } catch (error) {
+        console.error('Error loading words.json:', error);
+        // Use default words if JSON file cannot be loaded
+        words = [
+            "بَيْتٌ", "قَلَمٌ", "كِتَابٌ", "طَالِبٌ", "مَدْرَسَةٌ", "مُعَلِّمٌ", "دَرْسٌ", "فَصْلٌ",
+            "مَجَلَّةٌ", "جَرِيدَةٌ", "رَسُولٌ", "نَبِيٌّ", "مَلَكٌ", "شَيْطَانٌ", "إِنْسَانٌ",
+            "حَيَوَانٌ", "نَبَاتٌ", "شَجَرَةٌ", "زَهْرَةٌ", "نَهْرٌ", "بَحْرٌ", "جَبَلٌ", "سَمَاءٌ",
+            "شَمْسٌ", "قَمَرٌ", "نُجُومٌ", "سَحَابٌ", "مَطَرٌ", "بَرْدٌ", "رِيحٌ", "نَارٌ"
+        ];
+    }
+    
+    // Filter words based on selected letters and diacritics
+    const filteredWords = words.filter(word => {
+        // Check if all letters in the word are in the selected letters
+        const wordLetters = extractLettersFromWord(word);
+        const hasAllLetters = wordLetters.every(letter => selectedLetters.includes(letter));
+        
+        // Check if all diacritics in the word are in the selected diacritics
+        const wordDiacritics = getAllDiacriticsFromWord(word);
+        const hasAllDiacritics = wordDiacritics.every(diacritic => selectedDiacritics.includes(diacritic));
+        
+        return hasAllLetters && hasAllDiacritics;
+    });
+    
+    // Extract syllables from filtered words
+    const syllables = [];
+    
+    filteredWords.forEach(word => {
+        // Extract initial and final syllables from each word
+        const wordSyllables = extractInitialAndFinalSyllables(word);
+        syllables.push(...wordSyllables);
+    });
+    
+    return syllables;
+}
+
+// Extract initial and final syllables from a word
+function extractInitialAndFinalSyllables(word) {
+    const syllables = [];
+    
+    // A syllable is defined as:
+    // 1. A vowel (with its diacritic)
+    // 2. A consonant with a preceding vowel
+    // 3. Cannot be just a consonant alone
+    
+    // For simplicity, we'll extract the first and last syllables
+    
+    // Initial syllable (first 1-2 characters with diacritics)
+    let initialSyllable = '';
+    let i = 0;
+    
+    // Add first letter
+    if (i < word.length) {
+        initialSyllable += word[i];
+        i++;
+        
+        // Add diacritics that follow the first letter
+        while (i < word.length && isDiacritic(word[i])) {
+            initialSyllable += word[i];
+            i++;
+        }
+        
+        // Add second letter if it exists
+        if (i < word.length && !isDiacritic(word[i])) {
+            // Check if adding this would make a valid syllable
+            // (not starting with a sukun/madd/tnween)
+            if (!['ْ', 'ا', 'و', 'ي', 'ً', 'ٌ', 'ٍ'].includes(word[i])) {
+                initialSyllable += word[i];
+                i++;
+                
+                // Add diacritics that follow the second letter
+                while (i < word.length && isDiacritic(word[i])) {
+                    initialSyllable += word[i];
+                    i++;
+                }
+            }
+        }
+    }
+    
+    // Final syllable (last 1-2 characters with diacritics)
+    let finalSyllable = '';
+    let j = word.length - 1;
+    
+    // Collect diacritics at the end
+    const trailingDiacritics = [];
+    while (j >= 0 && isDiacritic(word[j])) {
+        trailingDiacritics.unshift(word[j]);
+        j--;
+    }
+    
+    // Add the last letter
+    if (j >= 0) {
+        // We need to find the preceding vowel to form a syllable
+        let letterIndex = j;
+        finalSyllable = word[letterIndex];
+        
+        // Add trailing diacritics
+        trailingDiacritics.forEach(d => finalSyllable += d);
+        
+        // Move backwards to find a vowel
+        letterIndex--;
+        let tempChars = '';
+        while (letterIndex >= 0) {
+            const char = word[letterIndex];
+            if (!isDiacritic(char)) {
+                // Found a letter, prepend it
+                tempChars = char + tempChars;
+                // Check if this letter has a vowel
+                if (hasVowelSound(word, letterIndex)) {
+                    finalSyllable = tempChars + finalSyllable;
+                    break;
+                }
+            } else {
+                // Found a diacritic, prepend it
+                tempChars = char + tempChars;
+            }
+            letterIndex--;
+        }
+    }
+    
+    // Add syllables to result if they meet criteria
+    if (initialSyllable && isValidSyllable(initialSyllable)) {
+        syllables.push(initialSyllable);
+    }
+    
+    if (finalSyllable && finalSyllable !== initialSyllable && isValidSyllable(finalSyllable)) {
+        syllables.push(finalSyllable);
+    }
+    
+    return syllables;
+}
+
+// Check if a character sequence represents a valid syllable
+function isValidSyllable(syllable) {
+    // Must not start with sukun, madd letters, tanween, or shadda
+    if (syllable.length === 0) return false;
+    
+    const firstChar = syllable[0];
+    if (['ْ', 'ا', 'و', 'ي', 'ً', 'ٌ', 'ٍ', 'ّ'].includes(firstChar)) {
+        return false;
+    }
+    
+    // Must contain at least one vowel sound (fatha, damma, kasra)
+    for (let i = 0; i < syllable.length; i++) {
+        if (['َ', 'ُ', 'ِ'].includes(syllable[i])) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+// Check if a letter at a specific index has a vowel sound
+function hasVowelSound(word, index) {
+    const letter = word[index];
+    
+    // Check the following characters for diacritics
+    let i = index + 1;
+    while (i < word.length && isDiacritic(word[i])) {
+        if (['َ', 'ُ', 'ِ'].includes(word[i])) {
+            return true;
+        }
+        i++;
+    }
+    
+    return false;
+}
+
+// Check if a character is a diacritic
+function isDiacritic(char) {
+    // Arabic diacritics
+    const diacriticChars = ['َ', 'ُ', 'ِ', 'ً', 'ٌ', 'ٍ', 'ْ', 'ّ'];
+    // Madd diacritics
+    const maddChars = ['ا', 'و', 'ي'];
+    
+    return diacriticChars.includes(char) || maddChars.includes(char);
 }
 
 // Generate PDF only (no preview recreation)
