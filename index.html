@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعليم تهجي الكلمات</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">تعليم تهجي الكلمات</h1>
+                <p class="hero-subtitle">اختر الحروف والحركات لإنشاء ورقة عمل PDF مخصصة</p>
+                <div class="hero-buttons">
+                    <button id="start-learning-btn" class="cta-button">ابدأ التعلم الآن</button>
+                </div>
+            </div>
+        </section>
+        
+        <div class="main-content">
+            <div class="selected-letters-banner">
+                <span class="banner-label">الحروف المختارة:</span>
+                <span id="selected-letters-banner" class="selected-letters-text">لم يتم اختيار أي حروف بعد</span>
+            </div>
+
+            <main>
+                <!-- Letter Selection Section -->
+                <section class="selection-section">
+                    <h2>اختيار الحروف</h2>
+                    <div class="section-controls">
+                        <button id="select-all-letters" class="select-all-btn">تحديد جميع الحروف</button>
+                        <button id="deselect-all-letters" class="deselect-all-btn">إزالة تحديد الكل</button>
+                    </div>
+                    <div id="letters-container" class="grid-container"></div>
+                </section>
+
+                <!-- Diacritic Selection Section -->
+                <section class="selection-section">
+                    <h2>اختيار الحركات</h2>
+                    <div class="section-controls">
+                        <button id="select-all-diacritics" class="select-all-btn">تحديد جميع الحركات</button>
+                        <button id="deselect-all-diacritics" class="deselect-all-btn">إزالة تحديد الكل</button>
+                    </div>
+                    <div id="diacritics-container" class="grid-container"></div>
+                </section>
+
+                <!-- Combined Section: Add New Words and Page Customization -->
+                <section class="selection-section">
+                    <h2>إضافة كلمات وتخصيص الصفحة</h2>
+                    <div class="combined-section-container">
+                        <!-- Add New Words Section -->
+                        <div class="criteria-section">
+                            <!-- Add New Word Card -->
+                            <div class="section-card word-card" id="add-word-card">
+                                <div class="section-header">
+                                    <h3 class="section-title">إضافة كلمة جديدة</h3>
+                                </div>
+                                <div class="section-content">
+                                    <button id="add-word-btn" class="add-word-button-small">إضافة</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Customization Section -->
+                        <div class="customization-section">
+                            <h3>تخصيص الصفحة</h3>
+                            <div class="customization-container">
+                                <!-- Section 1 Card -->
+                                <div class="section-card selected" data-section="1" id="section1-card">
+                                    <div class="section-header">
+                                        <h3 class="section-title">الحروف مع الحركات</h3>
+                                    </div>
+                                    <div class="section-content">
+                                        <div class="row-control">
+                                            <label for="section1-rows">عدد الصفوف:</label>
+                                            <input type="number" id="section1-rows" class="row-input" min="1" max="10" value="3">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Section 2 Card -->
+                                <div class="section-card selected" data-section="2" id="section2-card">
+                                    <div class="section-header">
+                                        <h3 class="section-title">مجموعات من حرفين</h3>
+                                    </div>
+                                    <div class="section-content">
+                                        <div class="row-control">
+                                            <label for="section2-rows">عدد الصفوف:</label>
+                                            <input type="number" id="section2-rows" class="row-input" min="1" max="10" value="3">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Section 3 Card -->
+                                <div class="section-card selected" data-section="3" id="section3-card">
+                                    <div class="section-header">
+                                        <h3 class="section-title">كلمات مختارة</h3>
+                                    </div>
+                                    <div class="section-content">
+                                        <div class="row-control">
+                                            <label for="section3-rows">عدد الصفوف:</label>
+                                            <input type="number" id="section3-rows" class="row-input" min="1" max="10" value="3">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Add Word Modal -->
+                <div id="add-word-modal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h3>إضافة كلمات جديدة</h3>
+                        
+                        <!-- Single Word Addition -->
+                        <div class="form-group">
+                            <label for="new-word-input">أدخل كلمة واحدة أو أكثر مع التشكيل (استخدم الفاصلة للفصل بين الكلمات):</label>
+                            <input type="text" id="new-word-input" placeholder="مثال: بَيْتٌ، قَلَمٌ، كِتَابٌ" dir="rtl">
+                            <button id="save-single-word-btn" class="small-button">إضافة الكلمات</button>
+                            <p class="note">ملاحظة: يجب وضع فاصلة (،) أو (,) بين الكلمات</p>
+                            <div id="upload-status" style="margin-top: 10px; display: none;"></div>
+                        </div>
+                        
+                        <!-- Bulk Word Addition via JSON -->
+                        <div class="form-group">
+                            <label for="json-file-input">رفع ملف JSON يحتوي على كلمات:</label>
+                            <input type="file" id="json-file-input" accept=".json">
+                            <button id="upload-json-btn" class="small-button">رفع الملف</button>
+                            <div id="upload-status-json" style="margin-top: 10px; display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <section class="controls">
+                    <button id="preview-btn">معاينة</button>
+                    <button id="generate-btn">تحميل الملف</button>
+                    <button id="reset-btn">إعادة تعيين</button>
+                </section>
+
+                <!-- Preview Section -->
+                <section class="preview-section">
+                    <h2>معاينة</h2>
+                    <div id="preview-container"></div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="/script.js"></script>
+</body>
+</html>

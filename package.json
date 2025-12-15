@@ -1,0 +1,26 @@
+{
+  "name": "tahaji-app",
+  "version": "1.0.0",
+  "description": "Tahaji Application for learning Arabic diacritics",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "server": "node server.js",
+    "dev": "concurrently \"npm run server\" \"electron .\""
+  },
+  "keywords": [
+    "arabic",
+    "diacritics",
+    "learning",
+    "education"
+  ],
+  "author": "Tahaji Team",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^latest",
+    "electron-squirrel-startup": "^1.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
