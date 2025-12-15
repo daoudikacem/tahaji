@@ -1224,48 +1224,108 @@ function generatePDFOnly() {
 // Generate PDF
 function generatePDF() {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('p', 'mm', 'a4');
     
     // Use html2canvas to convert the preview to canvas
     const previewElement = document.getElementById('worksheet-preview');
     if (!previewElement) return;
     
-    html2canvas(previewElement).then(canvas => {
+    // Create a clone for PDF generation
+    const clone = previewElement.cloneNode(true);
+    clone.style.position = 'absolute';
+    clone.style.left = '-9999px';
+    clone.style.width = '210mm'; // A4 width
+    clone.style.backgroundColor = '#ffffff';
+    
+    // Apply PDF-specific styling
+    const mainTitle = clone.querySelector('.worksheet-main-title');
+    if (mainTitle) {
+        mainTitle.textContent = 'هَيَّا لِنَقْرَأَ مَعًا 📚';
+        mainTitle.style.fontSize = '32px';
+        mainTitle.style.color = '#FF6B6B';
+        mainTitle.style.borderBottom = '4px solid #4ECDC4';
+        mainTitle.style.paddingBottom = '10px';
+        mainTitle.style.marginBottom = '10px';
+    }
+    
+    // Style selected letters section
+    const selectedLettersDiv = clone.querySelector('.worksheet-selected-letters');
+    if (selectedLettersDiv) {
+        selectedLettersDiv.style.fontSize = '12px';
+        selectedLettersDiv.style.padding = '5px';
+        selectedLettersDiv.style.backgroundColor = '#f0f8ff';
+        selectedLettersDiv.style.border = '1px dashed #87CEEB';
+        selectedLettersDiv.style.margin = '5px 0';
+    }
+    
+    // Style section titles
+    const sectionTitles = clone.querySelectorAll('.section-title');
+    sectionTitles.forEach(title => {
+        title.style.margin = '8px 0';
+        title.style.padding = '5px';
+    });
+    
+    // Style grids
+    const grids = clone.querySelectorAll('.worksheet-grid');
+    grids.forEach(grid => {
+        grid.style.gap = '5px';
+        grid.style.marginBottom = '10px';
+    });
+    
+    // Style cells
+    const cells = clone.querySelectorAll('.worksheet-cell');
+    cells.forEach(cell => {
+        cell.style.fontSize = '32px';
+        cell.style.fontWeight = 'bold';
+        cell.style.padding = '1px';
+        cell.style.color = '#333333';
+        cell.style.backgroundColor = '#ffffff';
+        cell.style.border = '1px solid #4ECDC4';
+        cell.style.borderRadius = '2px';
+        cell.style.boxShadow = 'none';
+        cell.style.height = '50px';
+    });
+    
+    document.body.appendChild(clone);
+    
+    // Generate PDF with clean page handling
+    html2canvas(clone, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+    }).then(canvas => {
+        document.body.removeChild(clone);
+        
+        // Create new PDF document
+        const doc = new jsPDF('p', 'mm', 'a4');
         const imgData = canvas.toDataURL('image/png');
         const imgWidth = 210; // A4 width in mm
         const pageHeight = 297; // A4 height in mm
         const imgHeight = canvas.height * imgWidth / canvas.width;
-        let heightLeft = imgHeight;
-        let position = 0;
         
-        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+        // Calculate how many pages we need
+        const totalPages = Math.ceil(imgHeight / pageHeight);
         
-        // Add new pages if content is taller than one page
-        while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
-            doc.addPage();
+        // Add content pages without any extra blank pages
+        for (let i = 0; i < totalPages; i++) {
+            // Add a new page for pages after the first one
+            if (i > 0) {
+                doc.addPage();
+            }
+            
+            // Calculate the vertical position to show the correct part of the image
+            const position = -i * pageHeight;
             doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
         }
         
-        // Add second identical page
-        doc.addPage();
-        doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-        
-        // Add additional pages if content is taller than one page (for second copy)
-        let heightLeftSecond = imgHeight;
-        heightLeftSecond -= pageHeight;
-        
-        while (heightLeftSecond >= 0) {
-            position = heightLeftSecond - imgHeight;
-            doc.addPage();
-            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeftSecond -= pageHeight;
-        }
-        
-        // Save the PDF
+        // Save the PDF with only the content pages
         doc.save('worksheet.pdf');
+    }).catch(error => {
+        if (clone.parentNode) {
+            document.body.removeChild(clone);
+        }
+        console.error('Error generating PDF:', error);
+        alert('حدث خطأ أثناء إنشاء الملف. يرجى المحاولة مرة أخرى.');
     });
 }
 

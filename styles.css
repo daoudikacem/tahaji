@@ -860,6 +860,7 @@ button {
         font-size: 3rem;
     }
     
+    
     .hero-subtitle {
         font-size: 1.3rem;
     }
@@ -955,6 +956,19 @@ button {
     .modal-content {
         padding: 30px;
         width: 95%;
+    }
+    
+    .worksheet-main-title {
+        font-size: 2.2rem;
+    }
+    
+    .worksheet-selected-letters {
+        font-size: 1.6rem;
+    }
+    
+    .section-title {
+        font-size: 1.4rem;
+        padding: 10px 15px;
     }
 }
 
@@ -1094,5 +1108,10 @@ button {
         font-size: 2rem;
         top: 15px;
         left: 15px;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+        padding: 8px 12px;
     }
 }
